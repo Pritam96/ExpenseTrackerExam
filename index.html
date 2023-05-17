@@ -16,33 +16,37 @@
     <title>Expense Tracker</title>
   </head>
   <body>
-    <div class="container">
-      <h2>Expense Tracker</h2>
-      <form id="_form">
-        <div class="input-group">
-          <div class="input-group-text">Selling Price:</div>
-          <input type="number" class="form-control" id="price" required />
+    <div class="container mt-4">
+      <div class="row">
+        <div class="col-4">
+          <h2>Expense Tracker</h2>
+          <form id="_form">
+            <div class="mt-3">
+              <label for="price" class="form-label">Selling Price</label>
+              <input type="number" class="form-control" id="price" required />
+            </div>
+
+            <div class="mt-3">
+              <label for="price" class="form-label">Product Name</label>
+              <input type="text" class="form-control" id="name" required />
+            </div>
+
+            <button class="btn btn-outline-primary mt-4" type="submit">
+              Add Product
+            </button>
+          </form>
         </div>
 
-        <div class="input-group">
-          <div class="input-group-text">Product Name:</div>
-          <input type="text" class="form-control" id="name" required />
+        <div class="col-7 mt-5">
+          <div class="container">
+            <h4>Products</h4>
+          </div>
+          <div class="container" id="response"></div>
+          <div class="container mt-3" id="total">
+            <h5>Total value worth of products: Rs 0</h5>
+          </div>
         </div>
-
-        <button class="btn btn-outline-primary" type="submit">
-          Add Product
-        </button>
-      </form>
-    </div>
-
-    <div class="container">
-      <h2>Products</h2>
-    </div>
-    <div class="container" id="response">
-      <h2>Products</h2>
-    </div>
-    <div class="container" id="total">
-      <h5>Total value worth of products: Rs 0</h5>
+      </div>
     </div>
 
     <script
