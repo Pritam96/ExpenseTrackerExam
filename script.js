@@ -1,4 +1,4 @@
-const BASE_URL = 'https://crudcrud.com/api/aa4c016e7fe9463e8fe098ca2c9943f0';
+const BASE_URL = 'https://crudcrud.com/api/d0c82f822cf641d0ae8078e5b34582ae';
 
 const form = document.querySelector('#_form');
 
@@ -6,22 +6,31 @@ let total = 0;
 
 form.addEventListener('submit', addToTheList);
 
-function addToTheList(e) {
+async function addToTheList(e) {
   e.preventDefault();
   const name = document.querySelector('#name').value;
   const price = Number(document.querySelector('#price').value);
 
   const item = { name, price };
 
-  axios
-    .post(`${BASE_URL}/stock`, item)
-    .then((res) => {
-      console.log(res);
-      showAll();
-    })
-    .catch((err) => console.log(err));
+  // axios
+  //   .post(`${BASE_URL}/stock`, item)
+  //   .then((res) => {
+  //     console.log(res);
+  //     showAll();
+  //   })
+  //   .catch((err) => console.log(err));
 
-  form.reset();
+  // form.reset();
+
+  try {
+    let response = await axios.post(`${BASE_URL}/stock`, item);
+    // console.log(response);
+    form.reset();
+    showAll();
+  } catch (error) {
+    console.log(`ERROR: ${error}`);
+  }
 }
 
 function product(item) {
@@ -51,13 +60,25 @@ function product(item) {
   deleteBtn.appendChild(button);
 
   button.onclick = () => {
-    axios
-      .delete(`${BASE_URL}/stock/${item._id}`)
-      .then((res) => {
-        console.log(res);
+    // axios
+    //   .delete(`${BASE_URL}/stock/${item._id}`)
+    //   .then((res) => {
+    //     console.log(res);
+    //     showAll();
+    //   })
+    //   .catch((err) => console.log(err));
+
+    deleteItem();
+
+    async function deleteItem() {
+      try {
+        let response = await axios.delete(`${BASE_URL}/stock/${item._id}`);
+        // console.log(response);
         showAll();
-      })
-      .catch((err) => console.log(err));
+      } catch (error) {
+        console.log(`ERROR: ${error}`);
+      }
+    }
   };
 
   row.appendChild(price_col);
@@ -73,27 +94,63 @@ function product(item) {
   ).innerHTML = `<h5>Total value worth of products: Rs ${total}</h5>`;
 }
 
-function showAll() {
-  document.querySelector('#response').innerHTML = '';
+async function showAll() {
+  // document.querySelector('#response').innerHTML = '';
+  // total = 0;
+  // axios
+  //   .get(`${BASE_URL}/stock`)
+  //   .then((res) => {
+  //     if (res.data.length < 1) {
+  //       console.log('no data');
+  //       total = 0;
+  //       document.querySelector(
+  //         '#total'
+  //       ).innerHTML = `<h5>Total value worth of products: Rs ${total}</h5>`;
+  //     } else {
+  //       res.data.forEach((item) => {
+  //         total += item.price;
+  //         product(item);
+  //         console.log(item);
+  //       });
+  //     }
+  //   })
+  //   .catch((err) => console.log(err));
+
   total = 0;
-  axios
-    .get(`${BASE_URL}/stock`)
-    .then((res) => {
-      if (res.data.length < 1) {
-        console.log('no data');
-        total = 0;
-        document.querySelector(
-          '#total'
-        ).innerHTML = `<h5>Total value worth of products: Rs ${total}</h5>`;
-      } else {
-        res.data.forEach((item) => {
-          total += item.price;
-          product(item);
-          console.log(item);
-        });
-      }
-    })
-    .catch((err) => console.log(err));
+  try {
+    let response = await axios.get(`${BASE_URL}/stock`);
+    if (response.data.length === 0) {
+      document.querySelector('#response').innerHTML = '';
+      console.log('NO DATA IS AVAILABLE');
+      // total = 0;
+      document.querySelector(
+        '#total'
+      ).innerHTML = `<h5>Total value worth of products: Rs 0</h5>`;
+    } else {
+      document.querySelector('#response').innerHTML = '';
+      response.data.forEach((item) => {
+        total += item.price;
+        product(item);
+      });
+    }
+  } catch (error) {
+    console.log(`ERROR: ${error}`);
+  }
 }
 
 showAll();
+
+// REQUEST INTERCEPTORS
+axios.interceptors.request.use(
+  async function (config) {
+    console.log(
+      `${config.method.toUpperCase()} request sent to ${
+        config.url
+      } at ${new Date()}`
+    );
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);

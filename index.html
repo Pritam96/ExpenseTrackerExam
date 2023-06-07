@@ -22,7 +22,7 @@
           <h2>Expense Tracker</h2>
           <form id="_form">
             <div class="mt-3">
-              <label for="price" class="form-label">Selling Price</label>
+              <label for="price" class="form-label">Product Price</label>
               <input type="number" class="form-control" id="price" required />
             </div>
 
@@ -41,7 +41,21 @@
           <div class="container">
             <h4>Products</h4>
           </div>
-          <div class="container" id="response"></div>
+          <div class="container" id="response">
+            <!-- <div class="card">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col">10000 Rupees</div>
+                  <div class="col">example product</div>
+                  <div class="col">
+                    <button class="btn btn-outline-secondary">
+                      Delete Product
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div> -->
+          </div>
           <div class="container mt-3" id="total">
             <h5>Total value worth of products: Rs 0</h5>
           </div>
@@ -49,6 +63,7 @@
       </div>
     </div>
 
+    <!-- Axios CDN -->
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"
       integrity="sha512-uMtXmF28A2Ab/JJO2t/vYhlaa/3ahUOgj1Zf27M5rOo8/+fcTUVH0/E0ll68njmjrLqOBjXM3V9NiPFL5ywWPQ=="
