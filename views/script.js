@@ -1,0 +1,185 @@
+const BASE_URL = 'http://localhost:4000';
+
+const form = document.querySelector('#_form');
+
+let total = 0;
+
+form.addEventListener('submit', addToTheList);
+
+async function addToTheList(e) {
+  e.preventDefault();
+  const id = document.querySelector('#expenseID').value;
+  const name = document.querySelector('#name').value;
+  const price = Number(document.querySelector('#price').value);
+  const category = document.querySelector('#category').value;
+
+  if (id === '' || id === null) {
+    // postAddExpense - Create a new expense
+    try {
+      const response = await axios.post(`${BASE_URL}`, {
+        name,
+        price,
+        category,
+      });
+      // console.log(response);
+      form.reset();
+      console.log('Record Added');
+      showAll();
+    } catch (error) {
+      console.log(`ERROR: ${error}`);
+    }
+  } else {
+    // postEditExpense - Update an expense
+    try {
+      const response = await axios.post(`${BASE_URL}/edit`, {
+        id,
+        name,
+        price,
+        category,
+      });
+      // console.log(response);
+      form.reset();
+      console.log('Record Updated');
+      showAll();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+}
+
+function product(item) {
+  const card = document.createElement('div');
+  card.className = 'card';
+  // It requires to disable the card at the time of edit
+  card.setAttribute('id', `card_${item.id}`);
+
+  const card_body = document.createElement('div');
+  card_body.className = 'card-body';
+
+  const row = document.createElement('div');
+  row.className = 'row';
+
+  const price_col = document.createElement('div');
+  price_col.className = 'col';
+  price_col.appendChild(document.createTextNode(`${item.price} Rupees`));
+
+  const name_col = document.createElement('div');
+  name_col.className = 'col';
+  name_col.appendChild(document.createTextNode(`${item.name}`));
+
+  // category column
+  const category_col = document.createElement('div');
+  category_col.className = 'col';
+  category_col.appendChild(document.createTextNode(`${item.category}`));
+
+  // Delete Button
+  const delete_div = document.createElement('div');
+  delete_div.className = 'col';
+  const delete_button = document.createElement('button');
+  delete_button.className = 'btn btn-outline-secondary';
+  // It requires to disable the delete button at the time of edit
+  delete_button.setAttribute('id', `delete_button_${item.id}`);
+  delete_button.appendChild(document.createTextNode('Delete'));
+  delete_div.appendChild(delete_button);
+
+  delete_button.onclick = () => {
+    deleteItem();
+
+    // postDeleteExpense - Delete an item
+    async function deleteItem() {
+      try {
+        const response = await axios.post(`${BASE_URL}/delete/${item.id}`);
+        // console.log(response);
+        showAll();
+      } catch (error) {
+        console.log(`ERROR: ${error}`);
+      }
+    }
+  };
+
+  // Edit Button
+  const edit_div = document.createElement('div');
+  edit_div.className = 'col';
+  const edit_button = document.createElement('button');
+  edit_button.className = 'btn btn-outline-warning';
+  // It requires to disable the edit button at the time of edit
+  edit_button.setAttribute('id', `edit_button_${item.id}`);
+  edit_button.appendChild(document.createTextNode('Edit'));
+  edit_div.appendChild(edit_button);
+
+  edit_button.onclick = () => {
+    document.querySelector('#expenseID').value = item.id;
+    document.querySelector('#name').value = item.name;
+    document.querySelector('#price').value = item.price;
+    document.querySelector('#category').value = item.category;
+
+    const submit_button = document.querySelector('#submit-button');
+    submit_button.className = 'btn btn-outline-warning mt-4';
+    submit_button.textContent = 'Edit Product';
+
+    // Hide / Highlight the current row & disable the buttons
+    const the_row = document.querySelector(`#card_${item.id}`);
+    the_row.className = 'card text-white bg-secondary';
+    // disable the buttons
+    document
+      .querySelector(`#delete_button_${item.id}`)
+      .classList.add('disabled');
+    document.querySelector(`#edit_button_${item.id}`).classList.add('disabled');
+    // console.log(the_row);
+  };
+
+  row.appendChild(price_col);
+  row.appendChild(name_col);
+  row.appendChild(category_col);
+  row.appendChild(delete_div);
+  row.appendChild(edit_div);
+
+  card_body.appendChild(row);
+  card.appendChild(card_body);
+
+  document.querySelector('#response').appendChild(card);
+  document.querySelector(
+    '#total'
+  ).innerHTML = `<h5>Total value worth of products: Rs ${total}</h5>`;
+}
+
+// getExpenses - get all items
+async function showAll() {
+  total = 0;
+  try {
+    const response = await axios.get(`${BASE_URL}`);
+    if (response.data.length === 0) {
+      document.querySelector('#response').innerHTML = '';
+      console.log('NO DATA IS AVAILABLE');
+      // total = 0;
+      document.querySelector(
+        '#total'
+      ).innerHTML = `<h5>Total value worth of products: Rs 0</h5>`;
+    } else {
+      document.querySelector('#response').innerHTML = '';
+      response.data.forEach((item) => {
+        total += Number(item.price);
+        product(item);
+      });
+    }
+  } catch (error) {
+    console.log(`ERROR: ${error}`);
+  }
+}
+
+showAll();
+
+// REQUEST INTERCEPTORS
+// axios.interceptors.request.use(
+//   async function (config) {
+//     console.log(
+//       `${config.method.toUpperCase()} request sent to ${
+//         config.url
+//       } at ${new Date()}`
+//     );
+//     return config;
+//   },
+//   (error) => {
+//     return Promise.reject(error);
+//   }
+// );
