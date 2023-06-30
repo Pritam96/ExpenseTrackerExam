@@ -9,13 +9,13 @@ exports.getExpenses = (req, res, next) => {
 };
 
 exports.postAddExpense = (req, res, next) => {
-  const name = req.body.name;
   const price = req.body.price;
+  const description = req.body.description;
   const category = req.body.category;
 
   Expense.create({
-    name: name,
     price: price,
+    description: description,
     category: category,
   })
     .then((result) => {
@@ -40,14 +40,14 @@ exports.postDeleteExpense = (req, res, next) => {
 
 exports.postEditExpense = (req, res, next) => {
   const id = req.body.id;
-  const name = req.body.name;
   const price = req.body.price;
+  const description = req.body.description;
   const category = req.body.category;
 
   Expense.findByPk(id)
     .then((expense) => {
-      expense.name = name;
       expense.price = price;
+      expense.description = description;
       expense.category = category;
 
       return expense.save();

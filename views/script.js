@@ -9,16 +9,16 @@ form.addEventListener('submit', addToTheList);
 async function addToTheList(e) {
   e.preventDefault();
   const id = document.querySelector('#expenseID').value;
-  const name = document.querySelector('#name').value;
   const price = Number(document.querySelector('#price').value);
+  const description = document.querySelector('#description').value;
   const category = document.querySelector('#category').value;
 
   if (id === '' || id === null) {
     // postAddExpense - Create a new expense
     try {
       const response = await axios.post(`${BASE_URL}`, {
-        name,
         price,
+        description,
         category,
       });
       // console.log(response);
@@ -33,8 +33,8 @@ async function addToTheList(e) {
     try {
       const response = await axios.post(`${BASE_URL}/edit`, {
         id,
-        name,
         price,
+        description,
         category,
       });
       // console.log(response);
@@ -63,9 +63,9 @@ function product(item) {
   price_col.className = 'col';
   price_col.appendChild(document.createTextNode(`${item.price} Rupees`));
 
-  const name_col = document.createElement('div');
-  name_col.className = 'col';
-  name_col.appendChild(document.createTextNode(`${item.name}`));
+  const description_col = document.createElement('div');
+  description_col.className = 'col';
+  description_col.appendChild(document.createTextNode(`${item.description}`));
 
   // category column
   const category_col = document.createElement('div');
@@ -109,8 +109,8 @@ function product(item) {
 
   edit_button.onclick = () => {
     document.querySelector('#expenseID').value = item.id;
-    document.querySelector('#name').value = item.name;
     document.querySelector('#price').value = item.price;
+    document.querySelector('#description').value = item.description;
     document.querySelector('#category').value = item.category;
 
     const submit_button = document.querySelector('#submit-button');
@@ -129,7 +129,7 @@ function product(item) {
   };
 
   row.appendChild(price_col);
-  row.appendChild(name_col);
+  row.appendChild(description_col);
   row.appendChild(category_col);
   row.appendChild(delete_div);
   row.appendChild(edit_div);

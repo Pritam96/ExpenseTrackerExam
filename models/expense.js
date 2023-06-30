@@ -9,12 +9,12 @@ const Expense = sequelize.define('expense', {
     allowNull: false,
     primaryKey: true,
   },
-  name: {
-    type: Sequelize.STRING,
-    allowNull: false,
-  },
   price: {
     type: Sequelize.DOUBLE,
+    allowNull: false,
+  },
+  description: {
+    type: Sequelize.STRING,
     allowNull: false,
   },
   category: Sequelize.STRING,
