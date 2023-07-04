@@ -2,6 +2,8 @@ const BASE_URL = 'http://localhost:4000';
 
 const form = document.querySelector('#_form');
 
+const submit_button = document.querySelector('#submit-button');
+
 let total = 0;
 
 form.addEventListener('submit', addToTheList);
@@ -40,6 +42,11 @@ async function addToTheList(e) {
       // console.log(response);
       form.reset();
       console.log('Record Updated');
+
+      // Back to the Add Expense Button
+      submit_button.className = 'btn btn-outline-primary mt-4';
+      submit_button.textContent = 'Add Expense';
+
       showAll();
     } catch (error) {
       console.log(error);
@@ -89,7 +96,7 @@ function product(item) {
     async function deleteItem() {
       try {
         const response = await axios.post(`${BASE_URL}/delete/${item.id}`);
-        // console.log(response);
+        console.log('Record Deleted');
         showAll();
       } catch (error) {
         console.log(`ERROR: ${error}`);
@@ -113,9 +120,8 @@ function product(item) {
     document.querySelector('#description').value = item.description;
     document.querySelector('#category').value = item.category;
 
-    const submit_button = document.querySelector('#submit-button');
     submit_button.className = 'btn btn-outline-warning mt-4';
-    submit_button.textContent = 'Edit Product';
+    submit_button.textContent = 'Edit Expense';
 
     // Hide / Highlight the current row & disable the buttons
     const the_row = document.querySelector(`#card_${item.id}`);
@@ -168,18 +174,3 @@ async function showAll() {
 }
 
 showAll();
-
-// REQUEST INTERCEPTORS
-// axios.interceptors.request.use(
-//   async function (config) {
-//     console.log(
-//       `${config.method.toUpperCase()} request sent to ${
-//         config.url
-//       } at ${new Date()}`
-//     );
-//     return config;
-//   },
-//   (error) => {
-//     return Promise.reject(error);
-//   }
-// );

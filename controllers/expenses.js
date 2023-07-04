@@ -1,60 +1,67 @@
 const Expense = require('../models/expense');
 
-exports.getExpenses = (req, res, next) => {
-  Expense.findAll()
-    .then((expense) => {
-      res.json(expense);
-    })
-    .catch((err) => console.log(err));
+exports.getExpenses = async (req, res, next) => {
+  try {
+    const expense = await Expense.findAll();
+    res.json(expense);
+  } catch (error) {
+    console.log(error);
+    res.json([]);
+  }
 };
 
-exports.postAddExpense = (req, res, next) => {
+exports.postAddExpense = async (req, res, next) => {
   const price = req.body.price;
   const description = req.body.description;
   const category = req.body.category;
 
-  Expense.create({
-    price: price,
-    description: description,
-    category: category,
-  })
-    .then((result) => {
-      console.log('Record Added');
-      res.json(result);
-    })
-    .catch((err) => console.log(err));
+  try {
+    const expense = await Expense.create({
+      price: price,
+      description: description,
+      category: category,
+    });
+    console.log('Record Added');
+    res.json(expense);
+  } catch (error) {
+    console.log(error);
+    res.json([]);
+  }
 };
 
-exports.postDeleteExpense = (req, res, next) => {
+exports.postDeleteExpense = async (req, res, next) => {
   const id = req.params.id;
-  Expense.findByPk(id)
-    .then((expense) => {
-      return expense.destroy();
-    })
-    .then((result) => {
-      console.log('Record Deleted');
-      res.json(result);
-    })
-    .catch((err) => console.log(err));
+
+  try {
+    const expense = await Expense.findByPk(id);
+    const result = await expense.destroy();
+    console.log('Record Deleted');
+    res.json(result);
+  } catch (error) {
+    console.log(error);
+    res.json([]);
+  }
 };
 
-exports.postEditExpense = (req, res, next) => {
+exports.postEditExpense = async (req, res, next) => {
   const id = req.body.id;
   const price = req.body.price;
   const description = req.body.description;
   const category = req.body.category;
 
-  Expense.findByPk(id)
-    .then((expense) => {
-      expense.price = price;
-      expense.description = description;
-      expense.category = category;
+  try {
+    const expense = await Expense.findByPk(id);
 
-      return expense.save();
-    })
-    .then((result) => {
-      console.log('Record Updated');
-      res.json(result);
-    })
-    .catch((err) => console.log(err));
+    expense.price = price;
+    expense.description = description;
+    expense.category = category;
+
+    const updatedExpense = await expense.save();
+
+    console.log('Record Updated');
+    res.json(updatedExpense);
+  } catch (error) {
+    console.log(error);
+    res.json([]);
+  }
 };
